@@ -30,6 +30,7 @@ args = list(clap.formatter.Formatter(sys.argv[1:]).format())
 command = clap.builder.Builder(model).insertHelpCommand().build().get()
 parser = clap.parser.Parser(command).feed(args)
 checker = clap.checker.RedChecker(parser)
+fail = False
 
 
 try:
@@ -237,10 +238,10 @@ def getLastIssue():
 def get_time_delta_arguments(delta_mods):
     time_delta = {}
     time_patterns = [
-        re.compile('^(\d+)(minutes?)$'),
-        re.compile('^(\d+)(hours?)$'),
-        re.compile('^(\d+)(days?)$'),
-        re.compile('^(\d+)(weeks?)$'),
+        re.compile(r'^(\d+)(minutes?)$'),
+        re.compile(r'^(\d+)(hours?)$'),
+        re.compile(r'^(\d+)(days?)$'),
+        re.compile(r'^(\d+)(weeks?)$'),
     ]
     for dm in delta_mods:
         found_any = False
@@ -559,7 +560,7 @@ def display_events_log(events_log, head=None, tail=None):
             else:
                 # if no special description formatting is provided, just display name of the event
                 event_description = ''
-            event_datetime = datetime.datetime.utcfromtimestamp(event.get('timestamp')).strftime('%Y-%m-%d %H:%M:%S')
+            event_datetime = datetime.datetime.fromtimestamp(event.get('timestamp')).strftime('%Y-%m-%d %H:%M:%S')
             if event['issue_uid'] in shortened_uids:
                 print('{issue_key} [{event_datetime}] {event_name}{event_description}'.format(
                     issue_key = colorise(COLOR_HASH, shortened_uids[event['issue_uid']]),
